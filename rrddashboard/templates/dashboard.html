@@ -1,0 +1,82 @@
+{% extends "base_site_template.html" %}
+
+{% block content %}
+
+<div id="column3">
+  <a href="#" id='toggleall'>Show/Hide All</a>
+  <span class="global zoomout">Unzoom All</span>
+  <ul>
+    {% for a_metric in metrics %}
+    <li><a class="graphlink"
+      href="{% url graph a_metric.label a_metric.host a_metric.plugininstance a_metric.rrdfile a_metric.datasource 0 86400 %}"
+      >graph :
+      {% if a_metric.label %}{{a_metric.label}}
+      {% else %}{{a_metric.host}} {{a_metric.plugininstance}} {{a_metric.rrdfile}} {{a_metric.datasource}}
+      {% endif %}
+    </a>
+      <!--
+      <a href="{% url remove a_metric.host a_metric.plugininstance a_metric.rrdfile a_metric.datasource %}"> |remove from favorites|</a>
+      -->
+      <span class="graph zoomin">[+]</span>
+      <span class="graph zoomout">[-]</span>
+      <span class="graph panleft">[&lt;]</span>
+      <span class="graph panright">[&gt;]</span>
+    </li>
+  {% endfor %}
+  </ul>
+</div>
+
+<script src="http://code.jquery.com/jquery-1.6.4.min.js"></script>
+<script>
+
+  function spanaction() {
+    var span = this;
+    var img = $(span).siblings('img')[0];
+    var path = img.src.split('/');
+    var endtime = parseInt(path[path.length-2]);
+    var showtime = parseInt(path[path.length-1]);
+    if (/zoomin/.test(span.className)) {
+      showtime /= 2;
+    }
+    if (/zoomout/.test(span.className)) {
+      showtime *= 2;
+    }
+    if (/panleft/.test(span.className)) {
+      endtime += showtime/2;
+    }
+    if (/panright/.test(span.className)) {
+      endtime -= showtime/2;
+      if (endtime<0) endtime=0;
+    }
+    path[path.length-2]=endtime;
+    path[path.length-1]=showtime;
+    img.src = path.join('/');
+    return false;
+  }
+
+  function togglegraph() {
+    var anchor = this;
+    if ($(this).siblings('img').length) {
+      $(this).siblings('img').remove();
+    } else {
+      var img = document.createElement('img');
+      img.style.display = 'block';
+      img.src = anchor.href;
+      anchor.parentNode.appendChild(img);
+    }
+    return false;
+  }
+
+  $('a.graphlink').bind('click', togglegraph);
+  $('span.graph').bind('click', spanaction);
+  $('#toggleall').bind('click', function () {
+    $('a.graphlink').trigger('click');
+  });
+  $('.global.zoomout').bind('click', function () {
+    $('.graph.zoomout').trigger('click');
+  });
+</script>
+
+{% endblock %}
+{% block sidebar %}
+{% endblock %}

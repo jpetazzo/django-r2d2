@@ -1,0 +1,118 @@
+{% extends "base_site_template.html" %}
+
+{% block content %}
+
+<div id="column1">
+<div class="titre">
+ <center><b><p>You are logged is as: {{ user.username }}</p></b></center>
+</div>
+<div class="contenu">
+  <br>
+  {% if plugininstances != None %}
+  <center><p><a href="http://nagios.dotcloud.com/cgi-bin/nagios3/status.cgi?host={{ host.name }}">» Nagios access to {{host.name}}</a></p></center>
+  <p>Serveur : <b>{{ host }}</b></p>
+  {% endif %}
+  <p>Favoris : <b><a href="{% url dashboard %}">Graphes</a></b></p>
+  <p>Équipement à inspecter :
+    <ul>
+      {% for host in hosts %}
+      <li><a href="{% url host host %}">{{host}}</a></li>
+      {% endfor %}
+    </ul>
+  </p>
+</div>
+</div>
+
+<div id="column2">
+  {% if plugininstances != None %}
+<div class="titre">
+ <center><b><p>Services :</p></b></center>
+</div>
+<div class="contenu">
+  <p>
+    <ul>
+      {% for plugininstance in plugininstances %}
+      <li>
+          <a href="{% url plugininstance host plugininstance %}">{{plugininstance}}</a>
+      </li>
+      {% endfor %}
+    </ul>
+  </p>
+  {% endif %}
+</div>
+</div>
+
+<div id="column3">
+  {% if ds_list %}
+  <ul>
+    {% for ds in ds_list %}
+    <li><a class="graphlink" href="{% url graph host host plugininstance ds.rrdname ds.dsname -1 86400 %}">{{ds.rrdname}} {{ds.dsname}}</a>
+      <a href="{% url add host plugininstance ds.rrdname ds.dsname %}"> |add to favorites|</a>
+      <span class="graph zoomin">[+]</span>
+      <span class="graph zoomout">[-]</span>
+      <span class="graph panleft">[&lt;]</span>
+      <span class="graph panright">[&gt;]</span>
+    </li>
+    {% endfor %}
+  </ul>
+  {% endif %}
+</div>
+<script>
+  function spanaction(event) {
+  var span = event.target;
+  var img = span.parentNode.getElementsByTagName('img')[0];
+  var path = img.src.split('/');
+  var endtime = parseInt(path[path.length-2]);
+  var showtime = parseInt(path[path.length-1]);
+  if (/zoomin/.test(span.className)) {
+  showtime /= 2;
+  }
+  if (/zoomout/.test(span.className)) {
+  showtime *= 2;
+  }
+  if (/panleft/.test(span.className)) {
+  endtime += showtime/2;
+  }
+  if (/panright/.test(span.className)) {
+  endtime -= showtime/2;
+  if (endtime<0) endtime=0;
+                 }
+                 path[path.length-2]=endtime;
+                 path[path.length-1]=showtime;
+                 img.src = path.join('/');
+		 return false;
+                 }
+                 function showgraph(event) {
+                 var anchor = event.target;
+                 var img = document.createElement('img');
+                 img.src = anchor.href;
+                 anchor.parentNode.appendChild(img);
+                 anchor.onclick = hidegraph;
+                 return false;
+                 }
+                 function hidegraph(event) {
+                 anchor = event.target;
+                 anchor.parentNode.removeChild(anchor.parentNode.lastChild);
+                 anchor.onclick = showgraph;
+		 return false;
+                 }
+                 var anchors = document.getElementsByTagName('a');
+		 for (var i=0; i<anchors.length; i++) {
+						 var anchor=anchors[i];
+						 if (anchor.className=='graphlink') {
+						 anchor.onclick = showgraph;
+						 }
+						 }
+						 var spans = document.getElementsByTagName('span');
+						 for (var i=0; i<spans.length; i++) {
+									       var span=spans[i];
+									       if (/graph/.test(span.className)) {
+									       span.onclick = spanaction;
+									       }
+									       }
+									       </script>
+
+
+{% endblock %}
+{% block sidebar %}
+{% endblock %}
