@@ -9,7 +9,9 @@
 <div class="contenu">
   <br>
   {% if plugininstances != None %}
-  <center><p><a href="http://nagios.dotcloud.com/cgi-bin/nagios3/status.cgi?host={{ host.name }}">» Nagios access to {{host.name}}</a></p></center>
+  <!--
+  <center><p><a href="/cgi-bin/nagios3/status.cgi?host={{ host.name }}">» Nagios access to {{host.name}}</a></p></center>
+  -->
   <p>Serveur : <b>{{ host }}</b></p>
   {% endif %}
   <p>Favoris : <b><a href="{% url dashboard %}">Graphes</a></b></p>
@@ -46,7 +48,7 @@
   {% if ds_list %}
   <ul>
     {% for ds in ds_list %}
-    <li><a class="graphlink" href="{% url graph host host plugininstance ds.rrdname ds.dsname -1 86400 %}">{{ds.rrdname}} {{ds.dsname}}</a>
+    <li><a class="graphlink" href="{% url graph host host plugininstance ds.rrdname ds.dsname 0 86400 %}">{{ds.rrdname}} {{ds.dsname}}</a>
       <a href="{% url add host plugininstance ds.rrdname ds.dsname %}"> |add to favorites|</a>
       <span class="graph zoomin">[+]</span>
       <span class="graph zoomout">[-]</span>

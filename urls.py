@@ -2,7 +2,7 @@ from django.conf.urls.defaults import *
 from django.contrib import admin
 from django.views.generic.simple import redirect_to
 
-import rrddashboard.urls
+import r2d2.urls
 
 admin.autodiscover()
 
@@ -10,13 +10,13 @@ urlpatterns = patterns(
     '',
 
     #(r'^$',
-    # redirect_to, dict(url='/rrddashboard/')),
+    # redirect_to, dict(url='/r2d2/')),
 
-    #(r'^rrddashboard/',
-	  #include(rrddashboard.urls)),
+    #(r'^r2d2/',
+	  #include(r2d2.urls)),
 
     (r'^',
-	  include(rrddashboard.urls)),
+	  include(r2d2.urls)),
 
     (r'^admin/', include(admin.site.urls)),
 )
