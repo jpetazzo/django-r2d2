@@ -13,6 +13,11 @@ urlpatterns = patterns(
         'r2d2.views.graph',
         name='graph'),
 
+    url(r'^debug/(?P<label>[^/]+)/(?P<host>[^/]+)/(?P<plugininstance>[^/]+)/(?P<rrdfile>[^/]+)/(?P<datasource>[^/]+)/(?P<endtime>\d+)/(?P<showtime>\d+)$',
+        'r2d2.views.graph',
+        kwargs=dict(debug=True),
+        name='debug'),
+
     url(r'^browse/(?P<host>[^/]+)/$',
         'r2d2.views.browse',
         name='host'),

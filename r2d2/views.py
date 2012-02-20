@@ -30,7 +30,7 @@ def get_rrd_plugininstances_for_host(host):
 
 
 def graph(request, label, host, plugininstance, rrdfile, datasource,
-          endtime=0, showtime=86400):
+          endtime=0, showtime=86400, debug=False):
     if rrdfile == 'memory-ram_limit':
         return memorygraph(request, label, host, plugininstance,
                            endtime, showtime)
@@ -50,8 +50,8 @@ def graph(request, label, host, plugininstance, rrdfile, datasource,
     options.append(rpn)
     options.append('LINE:total#000000:%s'%label)
     options =  " ".join(map(str,options))
-    # The following can be helpful for debugging.
-    #return HttpResponse(options)
+    if debug:
+        return HttpResponse(options)
     data_image = commands.getoutput("rrdtool graph " + options)
     return HttpResponse(data_image, mimetype="image/png")
 
