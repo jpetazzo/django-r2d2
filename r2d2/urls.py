@@ -6,7 +6,8 @@ urlpatterns = patterns(
     '',
 
     url(r'^$',
-        'r2d2.views.browse'),
+        'r2d2.views.browse',
+        name='home'),
 
     url(r'^graph/(?P<label>[^/]+)/(?P<host>[^/]+)/(?P<plugininstance>[^/]+)/(?P<rrdfile>[^/]+)/(?P<datasource>[^/]+)/(?P<endtime>\d+)/(?P<showtime>\d+)$',
         'r2d2.views.graph',
